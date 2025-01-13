@@ -1,0 +1,59 @@
+*{
+    margin: 0px;
+    box-sizing: border-box;
+
+}
+#canvasid{
+    background-color:rgba(255, 205, 55, 0.254);
+}
+#navbar{
+    padding-top: 2rem;
+    display: flex;
+    justify-content: center;
+    background-color:rgba(255, 205, 55, 0.254);
+}
+#toolbar{
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding: 20px;
+    border-radius: 5rem;
+}
+img{
+    height: 2rem;
+    border-radius: 2rem; 
+}
+.sticky{
+    width: 10rem;
+    height: 10rem;
+    position:absolute;
+    left: 45%;
+    top: 40%;
+}
+.top{
+    cursor: pointer;
+    background-color: rgb(105, 41, 4);
+    justify-content: flex-end;
+    align-items: center;
+    display: flex;
+    height: 20%;
+    gap: 10px;
+    padding-right: .5rem;
+}
+textarea{
+    background-color: rgb(143, 80, 43);
+    height: 85%;
+    width: 100%;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+}
+input{
+    display: none;
+}
+.image{
+    background-color: rgb(146, 105, 105);
+    height: 85%;
+    width: 100%;
+    border-radius: 0rem;
+}
