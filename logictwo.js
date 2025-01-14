@@ -5,6 +5,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 let tool = canvas.getContext("2d")
 let eventlisteneradded = false;
+let uploadadded=false;
 let pendown = false;
 let eventlisteneraddedsticky = false;
 let currenttool = "";
@@ -47,8 +48,14 @@ for (let i = 0; i < tools.length; i++) {
         }
         else if (toolid == "upload") {
             currenttool = "upload"
+            if(!uploadadded)
+            {
+                upload();
+                uploadadded=true;
+            }
+            else
+                input.click()
             // console.log("upload");
-            upload();
         }
         else if (toolid == "download") {
             currenttool = "download"
@@ -213,9 +220,8 @@ function stickydiv() {
     let sticky = outerbox(textArea);
     sticky.appendChild(textArea)
 }
-
+let input = document.querySelector("input");
 function upload() {
-    let input = document.querySelector("input");
     input.click()
     input.addEventListener("change", function () {
         let data = input.files[0];
