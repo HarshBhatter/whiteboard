@@ -33,12 +33,21 @@ img{
 .top{
     cursor: pointer;
     background-color: rgb(105, 41, 4);
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
     display: flex;
     height: 20%;
     gap: 10px;
     padding-right: .5rem;
+}
+.move
+{
+    flex: 80%;
+    /* background-color: rgb(76, 64, 57); */
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+
 }
 textarea{
     background-color: rgb(143, 80, 43);

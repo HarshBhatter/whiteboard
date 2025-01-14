@@ -14,56 +14,59 @@ let pos = [];
 let redo = [];
 let ro = -1;
 let rs = -1;
+let undocount=0;
 
 for (let i = 0; i < tools.length; i++) {
     tools[i].addEventListener("click", function () {
         const toolid = tools[i].id;
-        console.log(order)
+        // console.log(order)
         if (toolid == "pencil") {
             currenttool = "pencil"
-            console.log("pencil");
+            //console.log("pencil");
             tool.strokeStyle = "blue";
             tool.lineWidth = 1; // Replace with your original line width
             redo.length = 0;//so that whenever we click penscil the last stored in redo is deleted;
-            console.log(tool.strokeStyle)
+            // console.log(tool.strokeStyle)
             if (!eventlisteneradded)
                 draw();
 
         }
         else if (toolid == "eraser") {
             currenttool = "eraser"
-            console.log("eraser");
+            // console.log("eraser");
             tool.lineWidth = 1
             // This makes it act as an eraser
             if (!eventlisteneradded)
                 draw();
         }
-        if (toolid == "sticky") {
+        else if (toolid == "sticky") {
             currenttool = "sticky"
             // let sticker = Document.a
-            console.log("sticky");
+            // console.log("sticky");
             stickydiv();
         }
         else if (toolid == "upload") {
             currenttool = "upload"
-            console.log("upload");
+            // console.log("upload");
             upload();
         }
         else if (toolid == "download") {
             currenttool = "download"
-            console.log("download");
+            // console.log("download");
             download();
         }
         else if (toolid == "undo") {
             currenttool = "undo"
-            console.log("undo");
+            // console.log("undo");
             undo();
         }
         else if (toolid == "redo") {
             currenttool = "redo"
-            console.log("redo");
+            // console.log("redo");
             redoo();
         }
+        if(toolid != "undo")
+            undocount=0;
     })
 }
 
@@ -112,11 +115,14 @@ function redoo() {
 }
 
 function undo() {
-    console.log(order)
+    undocount++;
+    if(undocount>order.length)
+        return;
     if (order[order.length - 1] === "sticky") {
-        console.log("entered undo sticky")
+        // console.log("entered undo sticky")
         stick.unshift(stick.pop());
         order.unshift(order.pop());
+        // console.log(order)
         ro++;
         rs++;
         if (stick[0].type === "min")
@@ -127,13 +133,13 @@ function undo() {
             stick[0].ref.remove();
         else {
             l = stick.length - 1;
-            console.log(l + "    " + stick[l])
+            // console.log(l + "    " + stick[l])
             if (stick[l].type=== "create") {
                 stick[0].ref.style.top = 40+"%";
                 stick[0].ref.style.left = 45+"%";
             }
             else {
-                console.log("aya in undo")
+                // console.log("aya in undo")
 
                 let { top, left } = stick[l].ref.getBoundingClientRect()
 
@@ -143,8 +149,9 @@ function undo() {
         }
     }
     else {
-        console.log("entered undo draw")
+        // console.log("entered undo draw")
         order.unshift(order.pop());
+        // console.log(order)
         ro++;
         if (pos.length == 0) {
             return;
@@ -173,7 +180,7 @@ function draw() {
         let y = e.clientY - gety();
         tool.beginPath();
         tool.moveTo(e.clientX, y)
-        console.log("mousedown")
+        // console.log("mousedown")
         pendown = true;
         pos.push([])
         pos[pos.length - 1].push(tool.globalCompositeOperation, [e.clientX, e.clientY - gety()]);
@@ -190,13 +197,13 @@ function draw() {
     canvas.addEventListener("mouseup", function () {
         if(pendown)
         {
-            console.log("mouseup")
+            // console.log("mouseup")
             order[order.length] = "draw";
             tool.closePath();
         }
         pendown = false;
         tool.globalCompositeOperation = 'source-over';
-        console.log(pos.length);
+        // console.log(pos.length);
     })
     eventlisteneradded = true;
 }
@@ -223,24 +230,26 @@ function upload() {
 function outerbox(text_or_img) {
     let sticky = document.createElement("div");
     let top = document.createElement("div");
+    let m=document.createElement("div");
     let min = document.createElement("div");
     let del = document.createElement("div");
 
     sticky.setAttribute("class", "sticky");
     top.setAttribute("class", "top");
+    m.setAttribute("class", "move");
     min.innerText = "-";
     del.innerText = "x";
 
     sticky.appendChild(top);
+    top.appendChild(m);
     top.appendChild(min)
     top.appendChild(del)
     document.body.appendChild(sticky)
-    stick.push(
-        {
+    stick.push({
             ref: sticky,
             type: "create",
-        })
-    console.log(stick)
+    })
+    // console.log(stick)
     order[order.length] = "sticky";
 
     let ismin = false;
@@ -253,7 +262,7 @@ function outerbox(text_or_img) {
         sticky.remove();
         order[order.length] = "sticky";
     })
-    min.addEventListener("click", function () {
+    min.addEventListener("click", function (e) {
         if (ismin == true)
             text_or_img.style.display = "block";
         else
@@ -263,7 +272,9 @@ function outerbox(text_or_img) {
         {
             ref: sticky,
             type: "min",
-            content:text_or_img
+            content:text_or_img,
+            y: fy,
+            x: fx
         })
         order[order.length] = "sticky";
     })
@@ -271,17 +282,16 @@ function outerbox(text_or_img) {
     let initialX;
     let initialY;
     let move = false;
-    top.addEventListener("click", function (e) {
-        console.log("aya")
-        initialX = e.clientX
-        initialY = e.clientY
-        let fx,fy;
-        top.addEventListener("mousedown", function () {
+    let fx,fy;
+        m.addEventListener("mousedown", function (e) {
+            // console.log("mousedown")
             move = true;
+            initialX = e.clientX
+            initialY = e.clientY
         })
-        top.addEventListener("mousemove", function (e) {
+        m.addEventListener("mousemove", function (e) {
             if (move) {
-                console.log("mousemove")
+                // console.log("mousemove")
                 let finalX = e.clientX;
                 let finalY = e.clientY;
                 let dx = finalX - initialX;
@@ -295,9 +305,9 @@ function outerbox(text_or_img) {
                 fx=left+dx;
             }
         })
-        top.addEventListener("mouseup", function () {
+        m.addEventListener("mouseup", function () {
             if (move) {
-                console.log("mouseup")
+                // console.log("mouseup")
                 stick.push(
                     {
                         ref: sticky,
@@ -305,19 +315,17 @@ function outerbox(text_or_img) {
                         y: fy,
                         x: fx
                     })
-                console.log(stick);
+                // console.log(stick);
                 order[order.length] = "sticky";
+                move = false;
             }
-            move = false;
             eventlisteneraddedsticky = true;
         })
-    })
-
     return sticky;
 }
 
 function download() {
-    console.log("download clicked")
+    // console.log("download clicked")
     html2canvas(document.body).then((canvas) => {
         let a = document.createElement("a");
         a.href = canvas.toDataURL("image/png");
